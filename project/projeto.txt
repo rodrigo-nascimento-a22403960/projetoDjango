@@ -1,0 +1,5 @@
+
+SELECT distinct City
+FROM [AdventureWorksDW2017]..[FactInternetSales] a
+join [dbo].DimCustomer b on a.CustomerKey = b.CustomerKey
+join DimGeography c on b.GeographyKey = c.GeographyKey
