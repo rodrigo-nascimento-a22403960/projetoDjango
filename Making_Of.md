@@ -23,6 +23,12 @@ Vou descrever entao erros e correçoes ao longo deste processo no papel
   * **Correção 1:** Alterei a modelação no Django para um `OneToOneField`, garantindo que, no meu percurso, a minha licenciatura culmina num único Trabalho Final de Curso.
   * **Erro Identificado 2:** Faltavam atributos obrigatórios definidos nos requisitos (ex: imagens, links de repositório, datas).
   * **Correção 2:** Adicionei campos rigorosos (`ImageField` para logos/imagens, `URLField` para o GitHub oficial e páginas docentes, e `DateField` para ordenação cronológica das formações).
+  * **Versão 3 (Implementação de Relações e Erros de Sintaxe):**
+  * **Erro Identificado 3:** Durante a implementação da entidade `UnidadeCurricular`, o terminal devolveu um `IndentationError`. O Python bloqueou a criação das migrações porque o código inserido no `models.py` tinha espaços em branco desalinhados, quebrando a hierarquia das classes.
+  * **Correção 3:** Substituição e realinhamento completo do bloco de código no `models.py`. Garantida a indentação correta (4 espaços por nível), o que permitiu a execução limpa do `makemigrations` e a correta integração na base de dados.
+  * **Ajuste de Interface (Pluralização):**
+  * **Erro Identificado 4:** No painel de administração, o Django gerou nomes no plural incorretos para algumas entidades, como "Unidade curriculars" e "Tfcs", seguindo a gramática inglesa de apenas adicionar um "s".
+  * **Correção 4:** Utilização da `class Meta` dentro dos modelos no `models.py`. Através do atributo `verbose_name_plural`, forcei a nomenclatura correta em português ("Unidades Curriculares" e "Trabalhos Finais de Curso"), garantindo uma interface profissional e sem erros gramaticais.
 
 ## 3. Justificação das Decisões de Modelação
 
