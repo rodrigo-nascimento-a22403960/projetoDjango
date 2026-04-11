@@ -47,3 +47,46 @@ class TFC(models.Model):
 
     def __str__(self):
         return self.titulo
+
+class Tecnologia(models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField()
+    logo = models.ImageField(upload_to='tecnologias/', null=True, blank=True)
+    website_oficial = models.URLField(blank=True)
+    nivel_preferencia = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name_plural = "Tecnologias"
+
+    def __str__(self):
+        return self.nome
+
+class Competencia(models.Model):
+    nome = models.CharField(max_length=100)
+    tipo = models.CharField(max_length=50) # Ex: Hard Skill, Soft Skill
+    nivel = models.PositiveIntegerField()
+    descricao = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name_plural = "Competências"
+
+    def __str__(self):
+        return self.nome
+
+class Projeto(models.Model):
+    titulo = models.CharField(max_length=150)
+    descricao = models.TextField()
+    conceitos_aplicados = models.TextField()
+    imagem = models.ImageField(upload_to='projetos/', null=True, blank=True)
+    video_demo_url = models.URLField(blank=True, null=True)
+    github_url = models.URLField()
+    # Relações:
+    unidade_curricular = models.ForeignKey(UnidadeCurricular, on_delete=models.CASCADE)
+    tecnologias = models.ManyToManyField(Tecnologia)
+    competencias = models.ManyToManyField(Competencia)
+
+    class Meta:
+        verbose_name_plural = "Projetos"
+
+    def __str__(self):
+        return self.titulo
