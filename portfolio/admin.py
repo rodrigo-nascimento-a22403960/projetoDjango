@@ -1,20 +1,19 @@
 from django.contrib import admin
-from .models import Licenciatura, Docente, UnidadeCurricular, TFC, Tecnologia, Competencia, Projeto
+from .models import (
+    Licenciatura, Docente, UnidadeCurricular, TFC, 
+    Tecnologia, Competencia, Projeto, Formacao, Interesse
+)
 
 @admin.register(Licenciatura)
 class LicenciaturaAdmin(admin.ModelAdmin):
-    # Visualização da tabela
     list_display = ('nome', 'sigla', 'duracao_anos', 'ects_total')
-    # Campos de pesquisa
     search_fields = ('nome', 'sigla')
-    # Filtros laterais
     list_filter = ('duracao_anos',)
 
 @admin.register(Docente)
 class DocenteAdmin(admin.ModelAdmin):
     list_display = ('nome', 'pagina_pessoal_url')
     search_fields = ('nome',)
-
 
 @admin.register(UnidadeCurricular)
 class UnidadeCurricularAdmin(admin.ModelAdmin):
@@ -27,7 +26,6 @@ class TFCAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'autor', 'ano', 'destaque', 'licenciatura')
     search_fields = ('titulo', 'autor')
     list_filter = ('ano', 'destaque')
-
 
 @admin.register(Tecnologia)
 class TecnologiaAdmin(admin.ModelAdmin):
@@ -43,3 +41,12 @@ class ProjetoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'unidade_curricular')
     search_fields = ('titulo', 'descricao')
     list_filter = ('unidade_curricular',)
+
+@admin.register(Formacao)
+class FormacaoAdmin(admin.ModelAdmin):
+    list_display = ('curso', 'instituicao', 'ano_inicio', 'ano_fim')
+    search_fields = ('curso', 'instituicao')
+
+@admin.register(Interesse)
+class InteresseAdmin(admin.ModelAdmin):
+    list_display = ('nome',)

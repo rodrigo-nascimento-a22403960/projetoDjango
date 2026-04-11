@@ -24,7 +24,7 @@ class UnidadeCurricular(models.Model):
     semestre = models.PositiveIntegerField()
     ects = models.PositiveIntegerField()
     descricao = models.TextField()
-    imagem = models.ImageField(upload_to='ucs/')
+    imagem = models.ImageField(upload_to='ucs/', null=True, blank=True)
     licenciatura = models.ForeignKey(Licenciatura, on_delete=models.CASCADE)
     docentes = models.ManyToManyField(Docente)
 
@@ -43,7 +43,7 @@ class TFC(models.Model):
     licenciatura = models.ForeignKey(Licenciatura, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "Trabalhos Finais de Curso (TFCs)"
+        verbose_name_plural = "TFCs"
 
     def __str__(self):
         return self.titulo
@@ -63,7 +63,7 @@ class Tecnologia(models.Model):
 
 class Competencia(models.Model):
     nome = models.CharField(max_length=100)
-    tipo = models.CharField(max_length=50) # Ex: Hard Skill, Soft Skill
+    tipo = models.CharField(max_length=50) 
     nivel = models.PositiveIntegerField()
     descricao = models.TextField(blank=True)
 
@@ -78,9 +78,7 @@ class Projeto(models.Model):
     descricao = models.TextField()
     conceitos_aplicados = models.TextField()
     imagem = models.ImageField(upload_to='projetos/', null=True, blank=True)
-    video_demo_url = models.URLField(blank=True, null=True)
     github_url = models.URLField()
-    # Relações:
     unidade_curricular = models.ForeignKey(UnidadeCurricular, on_delete=models.CASCADE)
     tecnologias = models.ManyToManyField(Tecnologia)
     competencias = models.ManyToManyField(Competencia)
@@ -90,3 +88,26 @@ class Projeto(models.Model):
 
     def __str__(self):
         return self.titulo
+
+class Formacao(models.Model):
+    instituicao = models.CharField(max_length=150)
+    curso = models.CharField(max_length=150)
+    ano_inicio = models.PositiveIntegerField()
+    ano_fim = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Formações"
+
+    def __str__(self):
+        return f"{self.curso} - {self.instituicao}"
+
+class Interesse(models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField()
+    imagem = models.ImageField(upload_to='interesses/', null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Interesses"
+
+    def __str__(self):
+        return self.nome
