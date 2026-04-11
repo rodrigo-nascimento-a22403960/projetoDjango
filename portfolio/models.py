@@ -41,6 +41,8 @@ class TFC(models.Model):
     ano = models.PositiveIntegerField()
     destaque = models.BooleanField(default=False)
     licenciatura = models.ForeignKey(Licenciatura, on_delete=models.CASCADE)
+    link_pdf = models.URLField(blank=True, null=True)  # NOVO: para guardar o link do JSON
+    imagem_url = models.URLField(blank=True, null=True) # NOVO: para guardar a imagem do JSON
 
     class Meta:
         verbose_name_plural = "TFCs"
