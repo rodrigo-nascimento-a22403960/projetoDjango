@@ -1,39 +1,39 @@
 import json
 from portfolio.models import TFC, Licenciatura
 
-# Apagar TFCs antigos para evitar duplicados caso corras o script mais de uma vez
+# 1. Limpar dados antigos para evitar duplicados
 TFC.objects.all().delete()
 
-# Abrir o ficheiro JSON que acabaste de colar
-with open('portfolio/json/tfcs_2025.json', encoding='utf-8') as f:
+# 2. Abrir o ficheiro JSON (caminho atualizado para a pasta data)
+with open('portfolio/data/tfcs_2025.json', encoding='utf-8') as f:
     tfcs = json.load(f)
 
     for item in tfcs:
-        # 1. Lidar com a Licenciatura (O JSON só dá o nome da licenciatura)
-        nome_licenciatura = item['licenciaturas']
-        if not nome_licenciatura: # Se vier vazio no JSON
+        # Lidar com a Licenciatura
+        nome_licenciatura = item.get('licenciaturas', "Não Especificada")
+        if not nome_licenciatura:
             nome_licenciatura = "Não Especificada"
 
-        # Procura a Licenciatura. Se não existir, cria uma automaticamente!
+        # get_or_create: Procura ou cria se não existir
         licenciatura_obj, created = Licenciatura.objects.get_or_create(
             nome=nome_licenciatura,
             defaults={
                 'sigla': 'N/A',
-                'descricao': 'Criada via script de importação',
+                'descricao': 'Importado via script',
                 'duracao_anos': 3,
                 'ects_total': 180
             }
         )
 
-        # 2. Criar o TFC
+        # Criar o objeto TFC
         TFC.objects.create(
             titulo=item['titulo'],
-            autor=item['autores'] if item['autores'] else "Autor Desconhecido",
-            resumo=item['sumario'],
-            ano=2024, # Como o JSON não tem ano, definimos 2024 por defeito
+            autor=item.get('autores', "Autor Desconhecido"),
+            resumo=item.get('sumario', "Sem resumo disponível"),
+            ano=2024,
             licenciatura=licenciatura_obj,
-            link_pdf=item['link_pdf'],
-            imagem_url=item['imagem']
+            link_pdf=item.get('link_pdf', ""),
+            imagem_url=item.get('imagem', "")
         )
 
 print("✅ Todos os TFCs foram importados com sucesso!")

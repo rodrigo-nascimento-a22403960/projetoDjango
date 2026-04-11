@@ -3,6 +3,7 @@ from django.db import models
 class Licenciatura(models.Model):
     nome = models.CharField(max_length=150)
     sigla = models.CharField(max_length=10)
+    codigo_curso = models.PositiveIntegerField(null=True, blank=True) # NOVO: Para o código da API (ex: 260)
     descricao = models.TextField()
     duracao_anos = models.PositiveIntegerField()
     ects_total = models.PositiveIntegerField()
@@ -20,10 +21,12 @@ class Docente(models.Model):
 
 class UnidadeCurricular(models.Model):
     nome = models.CharField(max_length=150)
+    codigo_uc = models.CharField(max_length=20, null=True, blank=True) # NOVO: Para o código da API (ex: L2590)
     ano_curricular = models.PositiveIntegerField()
     semestre = models.PositiveIntegerField()
     ects = models.PositiveIntegerField()
     descricao = models.TextField()
+    conteudo_programatico = models.TextField(null=True, blank=True) # NOVO: Para os tópicos da cadeira
     imagem = models.ImageField(upload_to='ucs/', null=True, blank=True)
     licenciatura = models.ForeignKey(Licenciatura, on_delete=models.CASCADE)
     docentes = models.ManyToManyField(Docente)
@@ -79,8 +82,10 @@ class Projeto(models.Model):
     titulo = models.CharField(max_length=150)
     descricao = models.TextField()
     conceitos_aplicados = models.TextField()
+    ano = models.PositiveIntegerField(null=True, blank=True) # Recomendado para organizar por data
     imagem = models.ImageField(upload_to='projetos/', null=True, blank=True)
-    github_url = models.URLField()
+    github_url = models.URLField(blank=True, null=True) # Agora já não é obrigatório!
+    link_youtube = models.URLField(blank=True, null=True) # NOVO: Para o vídeo demo
     unidade_curricular = models.ForeignKey(UnidadeCurricular, on_delete=models.CASCADE)
     tecnologias = models.ManyToManyField(Tecnologia)
     competencias = models.ManyToManyField(Competencia)
@@ -94,8 +99,10 @@ class Projeto(models.Model):
 class Formacao(models.Model):
     instituicao = models.CharField(max_length=150)
     curso = models.CharField(max_length=150)
+    descricao = models.TextField(blank=True) # NOVO: Para descreveres o que fizeste
     ano_inicio = models.PositiveIntegerField()
     ano_fim = models.PositiveIntegerField(null=True, blank=True)
+    logotipo = models.ImageField(upload_to='formacao/', null=True, blank=True) # NOVO: Para a imagem
 
     class Meta:
         verbose_name_plural = "Formações"
