@@ -2,6 +2,9 @@
 
 Este documento regista a evolução, as decisões e os erros corrigidos durante a fase de modelação da base de dados do projeto de Portfólio em Django
 
+UserName: RodrigoNascimento
+Password: Mascarrote2006
+
 ## 1. Fotografias do DER e Apontamentos
  O planemaneto foi feito em papel e colocado no ficheiro dock_makingOf que tem uma pasta chamda imagens_papel. As imagens mostram todo o planemante antes de passar para o codigo no computador, diretorio:
 * `docs_makingOf/imagens_papel/`
