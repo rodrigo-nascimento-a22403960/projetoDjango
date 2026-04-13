@@ -80,3 +80,19 @@ Durante este processo de modelação, utilizei a Inteligência Artificial (Gemin
 * Sugerir o mapeamento ótimo para o ORM do Django 
 * Apoiar no debug dos comandos Git e na estruturação dos tipos de dados exigidos pelo guião da disciplina
 * E tambem para me ajudar a escrever 
+
+## Passo 4: Carregamento na Base de Dados de dados de TFCs
+
+Durante a análise do ficheiro JSON fornecido, verificou-se a existência de chaves com links para os PDFs e imagens dos trabalhos. Para acomodar esta informação sem perder dados, o modelo inicial `TFC` foi atualizado com dois novos atributos: `link_pdf` e `imagem_url` (ambos como `URLField`). 
+
+O carregamento dos dados foi automatizado através do script `loader.py`, utilizando o ORM do Django. Optou-se por utilizar o método `get_or_create` durante a iteração para garantir que as respetivas Licenciaturas associadas aos TFCs eram criadas dinamicamente, prevenindo erros caso estas não existissem previamente na base de dados.
+
+### Passo 6: Inserção de Dados e Refinamento de Modelos
+
+Durante a fase de recolha e inserção dos meus dados pessoais e profissionais no Django Admin, apercebi-me de que a modelação inicial precisava de ser refinada para refletir melhor a realidade de um portfólio moderno. 
+
+**Alterações efetuadas na modelação:**
+1. No modelo `Projeto`: Apercebi-me de que a maioria dos meus trabalhos práticos possui um repositório de código e, por vezes, um vídeo de demonstração. Adicionei os atributos `link_github` e `link_youtube` (ambos `URLField`) para poder partilhar estes recursos.
+2. No modelo `Formacao`: Para tornar a futura interface visualmente mais apelativa, adicionei o atributo `logotipo` (`ImageField`), permitindo associar a imagem da instituição de ensino a cada entrada.
+
+O processo de modelação demonstrou ser dinâmico e iterativo. Após aplicar estas migrações, a base de dados foi populada através do `/admin` com informação real sobre as minhas tecnologias, competências, formações e projetos realizados ao longo do curso.
