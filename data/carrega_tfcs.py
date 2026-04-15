@@ -1,13 +1,14 @@
 import os
+import sys
 import django
 import json
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from tfcs.models import TFC
+from portfolio.models import TFC
 
-# Apaga dados antigos
 TFC.objects.all().delete()
 
 with open('data/tfcs_2025_.json', encoding='utf-8') as f:
@@ -27,5 +28,4 @@ for tfc in tfcs:
         tecnologias_usadas=tfc.get('tecnologias_usadas', ''),
         rating=tfc.get('rating', 0),
     )
-
-print(f"{TFC.objects.count()} TFCs carregados com sucesso!")
+    

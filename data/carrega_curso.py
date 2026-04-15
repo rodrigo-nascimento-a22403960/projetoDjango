@@ -1,39 +1,32 @@
 import os
+import sys
 import django
 import json
 
-import sys
-sys.path.insert(0, '/workspaces/projetoDjango')
+# Adiciona a pasta raiz do projeto ao path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 django.setup()
 
-from licenciatura.models import Licenciatura, UnidadeCurricular
 
-# Apaga dados antigos
+
+from portfolio.models import Licenciatura, UnidadeCurricular
+
 UnidadeCurricular.objects.all().delete()
 Licenciatura.objects.all().delete()
 
-# Lê o ficheiro principal do curso
-with open('files/ULHT260-PT.json', encoding='utf-8') as f:
-    curso = json.load(f)
-
-# Cria a Licenciatura com dados reais do JSON
 lei = Licenciatura.objects.create(
-    nome=curso.get('courseName', 'Engenharia Informática'),
+    nome='Engenharia Informática',
     sigla='LEI',
-    descricao=curso.get('courseDescription', 'Licenciatura em Engenharia Informática da Universidade Lusófona'),
+    descricao='Licenciatura em Engenharia Informática da Universidade Lusófona',
     duracao_anos=3,
     ects_total=180,
 )
 
-# Mapear semestre a partir do courseFlatPlan
-semestre_map = {}
-for uc_info in curso['courseFlatPlan']:
-    codigo = uc_info['curricularIUnitReadableCode']
-    semestre_map[codigo] = uc_info.get('curricularSemester', 1)
+with open('files/ULHT260-PT.json', encoding='utf-8') as f:
+    curso = json.load(f)
 
-# Para cada UC no plano curricular
 for uc_info in curso['courseFlatPlan']:
     codigo = uc_info['curricularIUnitReadableCode']
     ficheiro = f"files/{codigo}-PT.json"
@@ -49,7 +42,6 @@ for uc_info in curso['courseFlatPlan']:
         nome=uc.get('curricularUnitName', ''),
         codigo=codigo,
         ano_curricular=uc.get('curricularYear', 1),
-        semestre=semestre_map.get(codigo, 1),
         ects=uc.get('ects', 0),
         natureza=uc.get('nature', ''),
         objetivos=uc.get('objectives', ''),
@@ -60,6 +52,5 @@ for uc_info in curso['courseFlatPlan']:
         avaliacao=uc.get('avaliacao', ''),
         licenciatura=lei,
     )
-    print(f"✓ {uc.get('curricularUnitName', codigo)}")
+   
 
-print(f"\nTotal: {UnidadeCurricular.objects.count()} UCs carregadas!")
