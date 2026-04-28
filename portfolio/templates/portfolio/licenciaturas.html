@@ -1,0 +1,17 @@
+{% extends "portfolio/base.html" %}
+{% block content %}
+<h2>Licenciatura</h2>
+<section>
+    {% for lic in licenciaturas %}
+    <article>
+        <header>
+            <h3>{{ lic.nome }} ({{ lic.sigla }})</h3>
+            <p>{{ lic.duracao_anos }} anos — {{ lic.ects_total }} ECTS</p>
+        </header>
+        <section>
+            <p>{{ lic.descricao }}</p>
+        </section>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

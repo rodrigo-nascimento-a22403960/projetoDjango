@@ -1,0 +1,24 @@
+{% extends "portfolio/base.html" %}
+{% block content %}
+<h2>TFCs</h2>
+<section>
+    {% for tfc in tfcs %}
+    <article>
+        <header>
+            <h3>{{ tfc.titulo }}</h3>
+            <p>{{ tfc.autores }}</p>
+            <p>{{ tfc.licenciaturas }}</p>
+        </header>
+        <section>
+            <p>{{ tfc.sumario|truncatewords:30 }}</p>
+            <h4>Tecnologias</h4>
+            <ul>
+                {% for t in tfc.tecnologias_usadas.split %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}
