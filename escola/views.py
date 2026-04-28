@@ -1,11 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-# Create your views here.
+from .models import Curso
 
-
-def pagina_html(request):
-    html = """~
-    <html>
-
-
-
+def cursos_view(request):
+    cursos = Curso.objects.all()
+    return render(request, 'escola/cursos.html', {'cursos': cursos})
