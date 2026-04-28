@@ -1,101 +1,160 @@
 # Diário de Bordo: Processo de Modelação do Portfólio
 
-Este documento regista a evolução, as decisões e os erros corrigidos durante a fase de modelação da base de dados do projeto de Portfólio em Django
-
-UserName: RodrigoNascimento
-Password: Mascarrote2006
+Este documento regista a evolução, as decisões e os erros corrigidos durante 
+a fase de modelação da base de dados do projeto de Portfólio em Django.
 
 ## 1. Fotografias do DER e Apontamentos
- O planemaneto foi feito em papel e colocado no ficheiro dock_makingOf que tem uma pasta chamda imagens_papel. As imagens mostram todo o planemante antes de passar para o codigo no computador, diretorio:
+O planeamento foi feito em papel e colocado no ficheiro docs_makingOf 
+que tem uma pasta chamada imagens_papel. As imagens mostram todo o 
+planeamento antes de passar para o código no computador:
 * `docs_makingOf/imagens_papel/`
-
 
 ## 2. Evolução do Modelo e Correção de Erros
 
-Vou descrever entao erros e correçoes ao longo deste processo no papel
+### Versão 1 (Rascunho Inicial)
+* **Erro Identificado:** O primeiro rascunho deixava algumas entidades 
+  (como as Formações) desconectadas do resto do modelo.
+* **Correção:** Atualizei as relações para que todas as tabelas fizessem 
+  parte da mesma rede. A `Licenciatura` passou a agregar todo o percurso 
+  académico, enquanto as `Competencias` passaram a cruzar a informação 
+  ganha tanto nos `Projetos` como nas `Formações`.
 
-* **Versão 1 (Rascunho Inicial):**
+### Versão 2 (Ajuste de Relações)
+* **Erro Identificado 1:** A relação inicial entre `Licenciatura` e `TFC` 
+  era de 1:N. No entanto, no contexto do meu portfólio pessoal, a minha 
+  licenciatura apenas me permite ter um TFC.
+* **Correção 1:** Alterei para `OneToOneField`, garantindo que a minha 
+  licenciatura culmina num único Trabalho Final de Curso.
+* **Erro Identificado 2:** Faltavam atributos obrigatórios definidos nos 
+  requisitos (imagens, links de repositório, datas).
+* **Correção 2:** Adicionei `ImageField` para logos/imagens, `URLField` 
+  para GitHub e páginas de docentes, e `DateField` para ordenação 
+  cronológica das formações.
 
-* **Versão 1 (Rascunho Inicial):**
-  * **Erro Identificado:** Reparei que o primeiro rascunho deixava algumas entidades (como as Formações e os Interesses) desconectadas do resto do modelo, o que iria dificultar o cruzamento de dados na aplicação.
-  * **Correção:** Atualizei as relações no diagrama para que todas as tabelas fizessem parte da mesma rede. A `Licenciatura` passou a agregar todo o percurso académico, enquanto as `Competencias` passaram a cruzar a informação ganha tanto nos `Projetos` como nas `Formações`.
+### Versão 3 (Implementação e Erros de Sintaxe)
+* **Erro Identificado 3:** `IndentationError` durante a implementação. 
+  O Python bloqueou as migrações porque o `models.py` tinha espaços 
+  desalinhados.
+* **Correção 3:** Realinhamento completo do bloco de código no `models.py` 
+  com indentação correta (4 espaços por nível).
+* **Erro Identificado 4:** No painel admin, o Django gerou nomes no plural 
+  incorretos como "Unidade curriculars" e "Tfcs".
+* **Correção 4:** Utilização de `class Meta` com `verbose_name_plural` 
+  em português ("Unidades Curriculares", "TFCs").
 
+### Versão 4 (Reestruturação das Apps)
+* **Erro Identificado 5:** Inicialmente criei uma app separada para cada 
+  entidade (licenciatura, docentes, tecnologias, etc.), semelhante ao 
+  projeto de um colega. No entanto, após indicação, a abordagem correta 
+  para este projeto é ter tudo dentro de uma única app `portfolio`.
+* **Correção 5:** Apaguei todas as apps separadas e movi todos os modelos 
+  para `portfolio/models.py`, atualizando o `settings.py` em conformidade.
 
-* **Versão 2 (Ajuste de Relações e Guião):**
-  * **Erro Identificado 1:** A relação inicial planeada entre `Licenciatura` e `TFC` era de 1:N (um curso tem muitos TFCs). No entanto, num contexto de portfólio pessoal, isto estava incorreto a meu ver porque a minha licenciatura apenas me permite ter um TFC.
-  * **Correção 1:** Alterei a modelação no Django para um `OneToOneField`, garantindo que, no meu percurso, a minha licenciatura culmina num único Trabalho Final de Curso.
-  * **Erro Identificado 2:** Faltavam atributos obrigatórios definidos nos requisitos (ex: imagens, links de repositório, datas).
-  * **Correção 2:** Adicionei campos rigorosos (`ImageField` para logos/imagens, `URLField` para o GitHub oficial e páginas docentes, e `DateField` para ordenação cronológica das formações).
-  * **Versão 3 (Implementação de Relações e Erros de Sintaxe):**
-  * **Erro Identificado 3:** Durante a implementação da entidade `UnidadeCurricular`, o terminal devolveu um `IndentationError`. O Python bloqueou a criação das migrações porque o código inserido no `models.py` tinha espaços em branco desalinhados, quebrando a hierarquia das classes.
-  * **Correção 3:** Substituição e realinhamento completo do bloco de código no `models.py`. Garantida a indentação correta (4 espaços por nível), o que permitiu a execução limpa do `makemigrations` e a correta integração na base de dados.
-  * **Ajuste de Interface (Pluralização):**
-  * **Erro Identificado 4:** No painel de administração, o Django gerou nomes no plural incorretos para algumas entidades, como "Unidade curriculars" e "Tfcs", seguindo a gramática inglesa de apenas adicionar um "s".
-  * **Correção 4:** Utilização da `class Meta` dentro dos modelos no `models.py`. Através do atributo `verbose_name_plural`, forcei a nomenclatura correta em português ("Unidades Curriculares" e "Trabalhos Finais de Curso"), garantindo uma interface profissional e sem erros gramaticais.
+### Versão 5 (Erros de Configuração)
+* **Erro Identificado 6:** Ao tentar correr `python manage.py startapp`, 
+  apareceu `Remove-Item: command not found` porque copiei um comando 
+  PowerShell (Windows) num ambiente Linux (GitHub Codespaces).
+* **Correção 6:** Utilizei o comando correto para Linux: `rm -rf`.
 
-## 3. Justificação das Decisões de Modelação
+* **Erro Identificado 7:** `ModuleNotFoundError: No module named 'django'` 
+  porque o Django não estava instalado no ambiente.
+* **Correção 7:** Instalei com `pip install django pillow`.
 
-Abaixo explico as decisões técnicas para a construção de cada tabela, focadas em manter a base de dados limpa e pronta para o Frontend:
+* **Erro Identificado 8:** `ImportError` no `portfolio/admin.py` porque 
+  estava a importar modelos que tinham sido removidos do `portfolio/models.py`.
+* **Correção 8:** Limpei o `admin.py` e o `models.py` do portfolio antes 
+  de criar as novas apps.
 
-**1. Licenciatura**
-* *Porquê Raiz?:* Defini a Licenciatura como a base de tudo. Usar `CASCADE` nas UCs garante que não ficam dados "órfãos" na base de dados se o curso for apagado.
-* *Controlo de Dados:* Os ECTS e a duração usam `PositiveIntegerField` para a base de dados bloquear automaticamente qualquer tentativa de inserir valores negativos.
+* **Erro Identificado 9:** `IndentationError: unexpected indent` no 
+  `settings.py` porque o `INSTALLED_APPS` tinha um espaço extra no início.
+* **Correção 9:** Removi o espaço e garantia que a variável estava 
+  corretamente alinhada à margem esquerda.
 
-**2. Docente**
-* *Tabela Independente:* Criei uma entidade separada em vez de apenas um campo de texto na UC. Isto resolve o problema real da relação N:M (um professor dá várias cadeiras, uma cadeira tem vários professores).
-* *Links Práticos:* O `URLField` serve para ligar diretamente à página oficial do professor na faculdade, facilitando o acesso a quem vir o portfólio.
+## 3. Carregamento de Dados via JSON e API
 
-**3. Unidade Curricular (UC)**
-* *Ligação ao Curso:* Usa uma `ForeignKey` para a Licenciatura (relação 1:N) para o sistema saber exatamente a que curso a cadeira pertence.
-* *Interface Visual:* O campo `ImageField` foi adicionado para que o Frontend possa mostrar cartões com imagens por disciplina, em vez de listas de texto aborrecidas.
+### TFCs
+O ficheiro JSON dos TFCs foi analisado e verificou-se que continha campos 
+adicionais não previstos no modelo inicial: `link_pdf`, `imagem`, 
+`palavras_chave`, `areas`, `tecnologias_usadas` e `rating`. O modelo foi 
+atualizado para incluir estes campos e foi criado o script 
+`data/carrega_tfcs.py` para automatizar o carregamento via ORM Django.
 
-**4. Projeto**
-* *O Centro Prático:* É a tabela que cruza mais dados. Liga à UC (1:N), Tecnologias (N:M) e Competências (N:M) para mostrar de forma automática o que fiz, onde fiz e o que aprendi.
-* *GitHub Obrigatório:* O link do repositório (`URLField`) é obrigatório porque o código-fonte é a primeira coisa que um recrutador vai querer ver.
+* **Erro Identificado:** Ao correr o script, apareceu 
+  `NameError: name 'requests' is not defined` porque o ficheiro 
+  `carrega_tfcs.py` tinha o conteúdo errado (tinha o código do 
+  `download_curso.py`).
+* **Correção:** Substituição do conteúdo pelo loader correto.
 
-**5. Tecnologia**
-* *Sem Repetições:* Entidade separada ligada por N:M. Assim escrevo "Python" apenas uma vez e ligo aos vários projetos onde o usei, poupando espaço na base de dados (normalização).
-* *Filtros Futuros:* O campo `nivel_preferencia` vai servir para eu conseguir ordenar as tecnologias e colocar as minhas "stacks" favoritas no topo do site.
+* **Erro Identificado 2:** `ModuleNotFoundError: No module named 'project'` 
+  ao correr os scripts de carregamento.
+* **Correção 2:** Adição de `sys.path.insert(0, ...)` no início dos 
+  scripts para que o Python encontre o módulo `project`.
 
-**6. TFC (Trabalho Final de Curso)**
-* *Regra de Negócio:* Usei o `OneToOneField` com a Licenciatura. O meu curso culmina num único TFC, logo a base de dados tem de proibir que se associem dois projetos finais à mesma licenciatura.
-* *Destaque no Site:* O campo booleano `destaque` funciona como um "interruptor" para eu conseguir afixar o TFC na página principal do portfólio através do Admin.
+### Curso e Unidades Curriculares
+Utilizei a API pública da Lusófona para descarregar os dados do curso LEI 
+(código 260) e de cada Unidade Curricular. O script `data/download_curso.py` 
+faz o download dos JSONs para a pasta `files/`. O script 
+`data/carrega_curso.py` lê esses JSONs e carrega os dados na base de dados 
+usando o ORM Django. Os dados carregados incluem: nome, código, ano 
+curricular, ECTS, natureza, objetivos, apresentação, metodologia, 
+programa, bibliografia e avaliação.
 
-**7. Competência**
-* *Cruzamento de Dados:* Liga-se em N:M aos Projetos e Formações. É a prova em base de dados de que as minhas "skills" vêm tanto da faculdade como de cursos extra.
-* *Organização Visual:* O campo `tipo` permite-me criar secções diferentes (ex: separar Hard Skills de Soft Skills) no currículo digital.
+## 4. Justificação das Decisões de Modelação
 
-**8. Formação**
-* *Fator Tempo:* Usei `DateField` para o início e fim. Ter datas reais permite pedir ao Django que ordene os cursos do mais recente para o mais antigo de forma automática (`order_by`).
-* *Ligação à Prática:* A relação direta com as Competências serve para justificar o valor prático da formação que tirei.
+**1. Licenciatura** — Base de tudo. `CASCADE` nas UCs garante que não 
+ficam dados órfãos. `PositiveIntegerField` para ECTS e duração bloqueia 
+valores negativos automaticamente.
 
-**9. Interesse**
-* *Focado na Tecnologia:* Em vez de hobbies soltos num texto, os interesses ligam-se diretamente às Tecnologias (N:M) que quero aprender no futuro.
-* *Métrica:* O `nivel_interesse` foi pensado para eu futuramente poder criar barras de progresso ou gráficos visuais na interface.
+**2. Docente** — Entidade separada em vez de campo de texto, resolve a 
+relação N:M real (um professor dá várias UCs, uma UC tem vários professores). 
+`URLField` para ligar à página oficial na Lusófona.
 
-**10. Making Of**
-* *Auto-documentação:* Tem uma `ForeignKey` para o Projeto. Como o meu portfólio final é, em si, um projeto Django, eu documento os passos da construção do site diretamente na sua própria base de dados.
-* *Registo Honesto:* Campos como `erro_encontrado` e `uso_ia` servem para garantir transparência técnica e cumprir os critérios da avaliação contínua.
+**3. Unidade Curricular** — `ForeignKey` para Licenciatura (1:N). 
+`ImageField` para o Frontend mostrar cartões visuais por disciplina. 
+Campos detalhados da API (objetivos, metodologia, programa, bibliografia) 
+enriquecem o portfólio.
 
-## 4. Uso de IA (Inteligência Artificial)
-Durante este processo de modelação, utilizei a Inteligência Artificial (Gemini) como um *peer-programmer* e tutor. A IA não gerou a ideia do meu percurso, mas foi fundamental para:
-* Validar a normalização do meu diagrama conceptual.
-* Sugerir o mapeamento ótimo para o ORM do Django 
-* Apoiar no debug dos comandos Git e na estruturação dos tipos de dados exigidos pelo guião da disciplina
-* E tambem para me ajudar a escrever 
+**4. Projeto** — Tabela que cruza mais dados: liga à UC (1:N), Tecnologias 
+(N:M) e Competências (N:M). GitHub obrigatório pois é a primeira coisa 
+que um recrutador quer ver.
 
-## Passo 4: Carregamento na Base de Dados de dados de TFCs
+**5. Tecnologia** — Entidade separada ligada por N:M evita repetição 
+("Python" escrito uma vez, ligado a vários projetos). `nivel_preferencia` 
+permite ordenar a stack favorita no topo.
 
-Durante a análise do ficheiro JSON fornecido, verificou-se a existência de chaves com links para os PDFs e imagens dos trabalhos. Para acomodar esta informação sem perder dados, o modelo inicial `TFC` foi atualizado com dois novos atributos: `link_pdf` e `imagem_url` (ambos como `URLField`). 
+**6. TFC** — `destaque` booleano funciona como "interruptor" para afixar 
+o TFC na página principal via Admin.
 
-O carregamento dos dados foi automatizado através do script `loader.py`, utilizando o ORM do Django. Optou-se por utilizar o método `get_or_create` durante a iteração para garantir que as respetivas Licenciaturas associadas aos TFCs eram criadas dinamicamente, prevenindo erros caso estas não existissem previamente na base de dados.
+**7. Competência** — Liga N:M a Projetos. `tipo` permite separar 
+Hard Skills de Soft Skills no currículo digital.
 
-### Passo 6: Inserção de Dados e Refinamento de Modelos
+**8. Formação** — `DateField` com `ordering = ['-data_inicio']` ordena 
+automaticamente do mais recente para o mais antigo.
 
-Durante a fase de recolha e inserção dos meus dados pessoais e profissionais no Django Admin, apercebi-me de que a modelação inicial precisava de ser refinada para refletir melhor a realidade de um portfólio moderno. 
+**9. Making Of** — Auto-documentação do processo. Campos `decisoes`, 
+`erros_correcoes` e `uso_ia` garantem transparência técnica e cumprem 
+os critérios de avaliação.
 
-**Alterações efetuadas na modelação:**
-1. No modelo `Projeto`: Apercebi-me de que a maioria dos meus trabalhos práticos possui um repositório de código e, por vezes, um vídeo de demonstração. Adicionei os atributos `link_github` e `link_youtube` (ambos `URLField`) para poder partilhar estes recursos.
-2. No modelo `Formacao`: Para tornar a futura interface visualmente mais apelativa, adicionei o atributo `logotipo` (`ImageField`), permitindo associar a imagem da instituição de ensino a cada entrada.
+## 5. Implementação de Views e Templates
 
-O processo de modelação demonstrou ser dinâmico e iterativo. Após aplicar estas migrações, a base de dados foi populada através do `/admin` com informação real sobre as minhas tecnologias, competências, formações e projetos realizados ao longo do curso.
+Para cada entidade foi criada uma view, um template HTML e uma URL:
+* `portfolio/views.py` — funções para listar cada entidade
+* `portfolio/templates/portfolio/` — templates HTML com `base.html` 
+  como layout comum
+* `portfolio/urls.py` — rotas para cada página
+* `portfolio/static/portfolio/styles.css` — estilização comum
+
+O mesmo processo foi seguido para a app `escola`, que serviu como 
+exercício prático antes de aplicar ao portfólio.
+
+## 6. Uso de Inteligência Artificial
+
+Durante este processo utilizei IA (Claude da Anthropic) como 
+peer-programmer e tutor. A IA foi utilizada para:
+* Debug de erros de configuração e sintaxe
+* Correção de comandos errados (PowerShell vs Linux)
+* Criação dos scripts de carregamento de dados JSON
+* Estruturação dos modelos Django
+* Criação de views, templates e URLs
+* Todas as decisões finais de modelação foram tomadas por mim, 
+  com a IA a servir de suporte técnico
