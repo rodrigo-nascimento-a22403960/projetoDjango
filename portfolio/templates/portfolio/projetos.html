@@ -1,14 +1,20 @@
 {% extends "portfolio/base.html" %}
+
 {% block content %}
 <h2>Projetos</h2>
 
-<!-- Botão de Criar (Apenas visível se autenticado) -->
+<!-- 1. BOTÃO DE CRIAR (Apenas visível se estiver logado e for gestor) -->
 {% if request.user.is_authenticated %}
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'projeto_criar' %}"><button>+ Novo Projeto</button></a>
-    </div>
+    {% for grupo in request.user.groups.all %}
+        {% if grupo.name == 'gestor-portfolio' %}
+            <div style="margin-bottom: 20px;">
+                <a href="{% url 'projeto_criar' %}"><button>+ Criar Novo Projeto</button></a>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endif %}
 
+<!-- 2. LISTA DE PROJETOS -->
 <section>
     {% for projeto in projetos %}
     <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
@@ -16,8 +22,10 @@
             <h3>{{ projeto.titulo }}</h3>
             <p><strong>Unidade Curricular:</strong> {{ projeto.unidade_curricular.nome }}</p>
         </header>
+        
         <section>
             <p>{{ projeto.descricao }}</p>
+            
             <h4>Tecnologias</h4>
             <ul>
                 {% for tec in projeto.tecnologias.all %}
@@ -29,15 +37,24 @@
                 <p><a href="{{ projeto.github_url }}" target="_blank">Ver no GitHub</a></p>
             {% endif %}
 
-            <!-- Botões de Editar e Apagar (Apenas visíveis se autenticado) -->
+            <!-- BOTÕES DE EDITAR E APAGAR (Apenas visíveis se for gestor) -->
             {% if request.user.is_authenticated %}
-                <div style="margin-top: 15px;">
-                    <a href="{% url 'projeto_editar' projeto.id %}"><button>Editar</button></a>
-                    <a href="{% url 'projeto_apagar' projeto.id %}"><button style="color: red;">Apagar</button></a>
-                </div>
+                {% for grupo in request.user.groups.all %}
+                    {% if grupo.name == 'gestor-portfolio' %}
+                        <div style="margin-top: 15px;">
+                            <a href="{% url 'projeto_editar' projeto.id %}"><button>Editar</button></a>
+                            <a href="{% url 'projeto_apagar' projeto.id %}"><button style="color: red;">Apagar</button></a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             {% endif %}
+            
         </section>
     </article>
+    
+    {% empty %}
+        <p>Ainda não existem projetos registados.</p>
     {% endfor %}
 </section>
+
 {% endblock %}

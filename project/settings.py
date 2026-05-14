@@ -146,3 +146,39 @@ MARKDOWNIFY = {
       "MARKDOWN_EXTENSIONS": ["markdown.extensions.fenced_code", ]
    }
 }
+
+# --- CONFIGURAÇÕES DE AUTENTICAÇÃO E EMAIL (ADICIONADAS AGORA) ---
+
+# Redireciona para aqui caso um utilizador tente aceder a uma página protegida
+LOGIN_URL = 'login'
+
+# --- CONFIGURAÇÃO DE EMAIL (SLIDES 49 E 50) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# SUBSTITUI PELOS TEUS DADOS REAIS DA GOOGLE
+# project/settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# O teu email e a password de app que acabaste de gerar
+EMAIL_HOST_USER = 'rodrigonascimento5b@gmail.com'
+EMAIL_HOST_PASSWORD = 'iryd iblf hcbn xglo'
+
+# Permite que o GitHub Codespaces consiga submeter formulários (Login, Criar, etc)
+# Permite tanto o link do GitHub como o localhost
+# Permite que o GitHub Codespaces mostre o teu site sem bloquear
+ALLOWED_HOSTS = ['*'] 
+
+# Permite que os formulários funcionem no Codespaces
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.github.dev',
+    'https://*.app.github.dev',
+]
+
+# (Aqui manténs as tuas configurações de EMAIL_BACKEND que já tinhas)

@@ -2,11 +2,24 @@
 {% block content %}
 <h2>Competências</h2>
 
-<!-- Botão de Criar -->
 {% if request.user.is_authenticated %}
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'competencia_criar' %}"><button>+ Nova Competência</button></a>
-    </div>
+    {% for grupo in request.user.groups.all %}
+        {% if grupo.name == 'gestor-portfolio' %}
+            <div style="margin-bottom: 20px;">
+                <a href="{% url 'competencia_criar' %}" class="btn-modern" style="background-color: #2ecc71;">+ Nova Competência</a>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% if request.user.is_authenticated %}
+    {% for grupo in request.user.groups.all %}
+        {% if grupo.name == 'gestor-portfolio' %}
+            <div style="margin-top: 15px;">
+                <a href="{% url 'competencia_editar' competencia.id %}" class="btn-modern" style="padding: 8px 15px; font-size: 0.9em;">Editar</a>
+                <a href="{% url 'competencia_apagar' competencia.id %}" class="btn-modern" style="background-color: #e74c3c; padding: 8px 15px; font-size: 0.9em;">Apagar</a>
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endif %}
 
 <section>
