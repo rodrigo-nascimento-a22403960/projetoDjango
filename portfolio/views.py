@@ -1,12 +1,56 @@
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import Licenciatura, UnidadeCurricular, Tecnologia, Competencia, Formacao, Projeto, TFC, MakingOf
 from .forms import ProjetoForm, TecnologiaForm, CompetenciaForm, FormacaoForm
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import models as auth_models
-from django.contrib.auth.decorators import login_required
+
+
+# ---- VIEWS DE LISTAGEM ----
+
+def index_view(request):
+    return redirect('projetos')
+
+def licenciaturas_view(request):
+    licenciaturas = Licenciatura.objects.prefetch_related('unidadecurricular_set').all()
+    return render(request, 'portfolio/licenciaturas.html', {'licenciaturas': licenciaturas})
+
+def ucs_view(request):
+    ucs = UnidadeCurricular.objects.select_related('licenciatura').prefetch_related('docentes').all()
+    return render(request, 'portfolio/ucs.html', {'ucs': ucs})
+
+def tecnologias_view(request):
+    tecnologias = Tecnologia.objects.all()
+    return render(request, 'portfolio/tecnologias.html', {'tecnologias': tecnologias})
+
+def competencias_view(request):
+    competencias = Competencia.objects.all()
+    return render(request, 'portfolio/competencias.html', {'competencias': competencias})
+
+def formacoes_view(request):
+    formacoes = Formacao.objects.all()
+    return render(request, 'portfolio/formacoes.html', {'formacoes': formacoes})
+
+def projetos_view(request):
+    projetos = Projeto.objects.select_related('unidade_curricular').prefetch_related('tecnologias', 'competencias').all()
+    return render(request, 'portfolio/projetos.html', {'projetos': projetos})
+
+def tfcs_view(request):
+    tfcs = TFC.objects.all()
+    return render(request, 'portfolio/tfcs.html', {'tfcs': tfcs})
+
+def makingof_view(request):
+    makingof = MakingOf.objects.all()
+    return render(request, 'portfolio/makingof.html', {'makingof': makingof})
+
+def sobre_view(request):
+    tecnologias = Tecnologia.objects.all()
+    makingofs = MakingOf.objects.all()
+    
+    return render(request, 'portfolio/sobre.html', {
+        'tecnologias': tecnologias,
+        'makingofs': makingofs
+    })
 
 # ---- AUTENTICAÇÃO ----
 
@@ -40,8 +84,7 @@ def logout_view(request):
     logout(request)
     return redirect('projetos')
 
-
-# ---- CRUD PROJETOS (protegido) ----
+# ---- CRUD PROJETOS ----
 
 @login_required
 def projeto_criar(request):
@@ -49,7 +92,7 @@ def projeto_criar(request):
     if form.is_valid():
         form.save()
         return redirect('projetos')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Novo Projeto'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Novo Projeto'})
 
 @login_required
 def projeto_editar(request, id):
@@ -58,7 +101,7 @@ def projeto_editar(request, id):
     if form.is_valid():
         form.save()
         return redirect('projetos')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Editar Projeto'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Editar Projeto'})
 
 @login_required
 def projeto_apagar(request, id):
@@ -68,8 +111,7 @@ def projeto_apagar(request, id):
         return redirect('projetos')
     return render(request, 'portfolio/confirmar_apagar.html', {'objeto': projeto, 'titulo': 'Apagar Projeto'})
 
-
-# ---- CRUD TECNOLOGIAS (protegido) ----
+# ---- CRUD TECNOLOGIAS ----
 
 @login_required
 def tecnologia_criar(request):
@@ -77,7 +119,7 @@ def tecnologia_criar(request):
     if form.is_valid():
         form.save()
         return redirect('tecnologias')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Nova Tecnologia'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Nova Tecnologia'})
 
 @login_required
 def tecnologia_editar(request, id):
@@ -86,7 +128,7 @@ def tecnologia_editar(request, id):
     if form.is_valid():
         form.save()
         return redirect('tecnologias')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Editar Tecnologia'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Editar Tecnologia'})
 
 @login_required
 def tecnologia_apagar(request, id):
@@ -96,7 +138,6 @@ def tecnologia_apagar(request, id):
         return redirect('tecnologias')
     return render(request, 'portfolio/confirmar_apagar.html', {'objeto': tecnologia, 'titulo': 'Apagar Tecnologia'})
 
-
 # ---- CRUD COMPETÊNCIAS ----
 
 @login_required
@@ -105,7 +146,7 @@ def competencia_criar(request):
     if form.is_valid():
         form.save()
         return redirect('competencias')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Nova Competência'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Nova Competência'})
 
 @login_required
 def competencia_editar(request, id):
@@ -114,7 +155,7 @@ def competencia_editar(request, id):
     if form.is_valid():
         form.save()
         return redirect('competencias')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Editar Competência'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Editar Competência'})
 
 @login_required
 def competencia_apagar(request, id):
@@ -124,8 +165,7 @@ def competencia_apagar(request, id):
         return redirect('competencias')
     return render(request, 'portfolio/confirmar_apagar.html', {'objeto': competencia, 'titulo': 'Apagar Competência'})
 
-
-# ---- CRUD FORMAÇÕES (protegido) ----
+# ---- CRUD FORMAÇÕES ----
 
 @login_required
 def formacao_criar(request):
@@ -133,7 +173,7 @@ def formacao_criar(request):
     if form.is_valid():
         form.save()
         return redirect('formacoes')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Nova Formação'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Nova Formação'})
 
 @login_required
 def formacao_editar(request, id):
@@ -142,7 +182,7 @@ def formacao_editar(request, id):
     if form.is_valid():
         form.save()
         return redirect('formacoes')
-    return render(request, 'portfolio/form.html', {'form': form, 'titulo': 'Editar Formação'})
+    return render(request, 'portfolio/forms.html', {'form': form, 'titulo': 'Editar Formação'})
 
 @login_required
 def formacao_apagar(request, id):

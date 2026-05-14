@@ -158,3 +158,25 @@ peer-programmer e tutor. A IA foi utilizada para:
 * Criação de views, templates e URLs
 * Todas as decisões finais de modelação foram tomadas por mim, 
   com a IA a servir de suporte técnico
+
+
+  #  Implementação do CRUD (Projetos, Tecnologias, Competências, Formações)
+
+## O Desafio
+O objetivo desta fase foi implementar as operações CRUD (Create, Read, Update, Delete) para as várias entidades do portfólio, permitindo gerir o conteúdo da aplicação diretamente pelo browser, de forma protegida.
+
+## Dificuldades Encontradas e Erros
+
+* **Erro de Nomenclatura (TemplateDoesNotExist):** Deparei-me com um erro clássico do Django ao tentar renderizar a página de criação. O erro indicava que o ficheiro `portfolio/form.html` não existia. A causa foi uma pequena assimetria entre o nome do ficheiro físico (que criei como `forms.html`, no plural) e o nome que estava a ser chamado na função `render` no `views.py` (no singular). A correção rápida passou por uniformizar tudo no `views.py` usando o "Find and Replace" para `forms.html`.
+* **Compreensão do Sistema de Rotas:** Inicialmente, gerou-se uma confusão em relação aos links nos botões, como `{% url 'projeto_editar' projeto.id %}`. Pensei que seria necessário criar um ficheiro HTML físico para cada ação de cada tabela. Rapidamente percebi que a tag `{% url %}` não procura ficheiros físicos, mas sim o `name` da rota definido no `urls.py`, o que redireciona dinamicamente para a View e Template corretos.
+* **Botões "Invisíveis":** Ao adicionar os botões de Edição e Apagar no HTML, eles não apareceram no ecrã. Isto aconteceu por duas razões lógicas: primeiro, o código `{% if request.user.is_authenticated %}` estava a ocultar os botões porque a sessão não tinha login feito; segundo, como a base de dados ainda não tinha projetos registados, o ciclo `{% for %}` não rodava e não desenhava a estrutura.
+
+## O que achei mais útil e Vantagens do Django
+
+* **Reutilização de Templates:** Uma das maiores vantagens que encontrei foi não ter de escrever código repetido. Consegui usar exatamente o mesmo ficheiro `forms.html` (com a tag mágica `{{ form.as_p }}`) e o mesmo `confirmar_apagar.html` para os Projetos, Tecnologias, Competências e Formações. O Django tratou de adaptar o formulário à base de dados de forma automática.
+* **Segurança Integrada:** O uso do decorador `@login_required` no `views.py` e da verificação `request.user.is_authenticated` nos templates HTML revelou-se uma forma super rápida e robusta de proteger a aplicação, garantindo que nenhum visitante comum consegue apagar ou editar o meu portfólio.
+
+## O que não gostei (ou aspetos a melhorar)
+
+* **Estilização Padrão dos Formulários:** Embora o `{{ form.as_p }}` seja incrivelmente útil para poupar tempo, o HTML gerado "cru" é esteticamente muito básico e pouco apelativo. 
+* **Usabilidade dos campos ManyToMany:** Os campos de relação Muitos-para-Muitos (como associar várias Tecnologias a um Projeto) exigem que o utilizador mantenha a tecla `Ctrl` pressionada para selecionar várias opções no browser, o que não é muito intuitivo em termos de Experiência de Utilizador (UX). Requererá a aplicação de CSS, JavaScript ou ferramentas como o *Crispy Forms* numa fase posterior.

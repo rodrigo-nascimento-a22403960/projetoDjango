@@ -1,15 +1,31 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
 <h2>Competências</h2>
+
+<!-- Botão de Criar -->
+{% if request.user.is_authenticated %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'competencia_criar' %}"><button>+ Nova Competência</button></a>
+    </div>
+{% endif %}
+
 <section>
-    {% for comp in competencias %}
-    <article>
+    {% for competencia in competencias %}
+    <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
         <header>
-            <h3>{{ comp.nome }}</h3>
-            <p>{{ comp.tipo }} — Nível {{ comp.nivel }}</p>
+            <h3>{{ competencia.nome }}</h3>
+            <p><strong>Tipo:</strong> {{ competencia.tipo }} | <strong>Nível:</strong> {{ competencia.nivel }}</p>
         </header>
         <section>
-            <p>{{ comp.descricao }}</p>
+            <p>{{ competencia.descricao }}</p>
+
+            <!-- Botões de Editar e Apagar -->
+            {% if request.user.is_authenticated %}
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'competencia_editar' competencia.id %}"><button>Editar</button></a>
+                    <a href="{% url 'competencia_apagar' competencia.id %}"><button style="color: red;">Apagar</button></a>
+                </div>
+            {% endif %}
         </section>
     </article>
     {% endfor %}

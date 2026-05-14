@@ -1,17 +1,157 @@
 {% extends "portfolio/base.html" %}
+{% load markdownify %}
+
 {% block content %}
-<h2>Making Of</h2>
-<section>
+<style>
+    /* Estilos Modernos para a Página Making Of */
+    .makingof-container {
+        max-width: 900px;
+        margin: 40px auto;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .page-title {
+        color: #1a252f;
+        font-size: 2.5em;
+        margin-bottom: 30px;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+    .makingof-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        padding: 45px;
+        margin-bottom: 40px;
+        border-top: 5px solid #2c3e50;
+    }
+    .makingof-header {
+        border-bottom: 1px solid #edf2f7;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+    .makingof-header h3 {
+        color: #2c3e50;
+        font-size: 2.2em;
+        margin: 0 0 10px 0;
+    }
+    .makingof-date {
+        color: #7f8c8d;
+        font-size: 1em;
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+    .makingof-date::before {
+        content: "📅";
+        margin-right: 8px;
+    }
+
+    /* --- MAGIA PARA CORRIGIR O MARKDOWN E AS BOLHAS AZUIS --- */
+    .md-content {
+        color: #4a5568;
+        line-height: 1.8;
+        font-size: 1.1em;
+    }
+    .md-content h1, .md-content h2 {
+        color: #2d3748;
+        margin-top: 1.8em;
+        margin-bottom: 0.8em;
+        border-bottom: 2px solid #edf2f7;
+        padding-bottom: 8px;
+    }
+    .md-content h3 {
+        color: #34495e;
+        margin-top: 1.5em;
+        margin-bottom: 0.8em;
+    }
+    /* Anular as "bolhas azuis" globais e repor as listas normais */
+    .md-content ul {
+        list-style-type: disc !important;
+        padding-left: 30px !important;
+        margin-bottom: 1.5em;
+    }
+    .md-content li {
+        background: transparent !important;
+        color: #4a5568 !important;
+        padding: 0 !important;
+        margin: 0 0 12px 0 !important;
+        border-radius: 0 !important;
+        display: list-item !important;
+        line-height: 1.6 !important;
+    }
+    .md-content strong {
+        color: #1a202c;
+    }
+    .md-content code {
+        background-color: #f1f5f9;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        color: #e53e3e;
+        font-size: 0.9em;
+    }
+
+    /* --- CAIXAS DE DESTAQUE PARA AS SECÇÕES EXTRA --- */
+    .section-box {
+        margin-top: 40px;
+        padding: 25px 30px;
+        border-radius: 8px;
+        background-color: #f8fafc;
+        border-left: 5px solid #cbd5e1;
+    }
+    /* Cores Específicas */
+    .box-decisoes { border-left-color: #10b981; background-color: #ecfdf5; }
+    .box-decisoes h2, .box-decisoes h3 { border-color: #a7f3d0; color: #047857; }
+    
+    .box-erros { border-left-color: #ef4444; background-color: #fef2f2; }
+    .box-erros h2, .box-erros h3 { border-color: #fecaca; color: #b91c1c; }
+    
+    .box-ia { border-left-color: #8b5cf6; background-color: #f5f3ff; }
+    .box-ia h2, .box-ia h3 { border-color: #ddd6fe; color: #6d28d9; }
+</style>
+
+<div class="makingof-container">
+    <h1 class="page-title">Diário de Bordo</h1>
+    
     {% for entry in makingof %}
-    <article>
-        <header>
+    <article class="makingof-card">
+        <header class="makingof-header">
             <h3>{{ entry.titulo }}</h3>
-            <p>{{ entry.data }}</p>
+            <p class="makingof-date">{{ entry.data|date:"d \d\e F \d\e Y" }}</p>
         </header>
-        <section>
-            <p>{{ entry.descricao }}</p>
-        </section>
+
+        <!-- SECÇÃO PRINCIPAL: Descrição -->
+        <div class="md-content">
+            {{ entry.descricao | markdownify }}
+        </div>
+
+        <!-- CAIXA VERDE: Decisões -->
+        {% if entry.decisoes %}
+        <div class="md-content section-box box-decisoes">
+            {{ entry.decisoes | markdownify }}
+        </div>
+        {% endif %}
+
+        <!-- CAIXA VERMELHA: Erros e Correções -->
+        {% if entry.erros_correcoes %}
+        <div class="md-content section-box box-erros">
+            {{ entry.erros_correcoes | markdownify }}
+        </div>
+        {% endif %}
+
+        <!-- CAIXA ROXA: Uso de IA -->
+        {% if entry.uso_ia %}
+        <div class="md-content section-box box-ia">
+            {{ entry.uso_ia | markdownify }}
+        </div>
+        {% endif %}
+    </article>
+    {% empty %}
+    <article class="makingof-card" style="text-align: center;">
+        <h3 style="color: #7f8c8d;">Ainda não há apontamentos registados.</h3>
+        <p>Acede à área de administração para adicionar os teus registos em formato Markdown.</p>
     </article>
     {% endfor %}
-</section>
+</div>
 {% endblock %}

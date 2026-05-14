@@ -1,16 +1,38 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
 <h2>Formações</h2>
+
+<!-- Botão de Criar -->
+{% if request.user.is_authenticated %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'formacao_criar' %}"><button>+ Nova Formação</button></a>
+    </div>
+{% endif %}
+
 <section>
     {% for formacao in formacoes %}
-    <article>
+    <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
         <header>
             <h3>{{ formacao.nome }}</h3>
-            <p>{{ formacao.instituicao }}</p>
-            <p>{{ formacao.data_inicio }} — {{ formacao.data_fim|default:"Presente" }}</p>
+            <p><strong>Instituição:</strong> {{ formacao.instituicao }}</p>
+            <p><strong>Data:</strong> {{ formacao.data_inicio|date:"M Y" }} 
+               {% if formacao.data_fim %} até {{ formacao.data_fim|date:"M Y" }}{% else %} (Presente){% endif %}
+            </p>
         </header>
         <section>
             <p>{{ formacao.descricao }}</p>
+            
+            {% if formacao.certificado_url %}
+                <p><a href="{{ formacao.certificado_url }}" target="_blank">Ver Certificado</a></p>
+            {% endif %}
+
+            <!-- Botões de Editar e Apagar -->
+            {% if request.user.is_authenticated %}
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'formacao_editar' formacao.id %}"><button>Editar</button></a>
+                    <a href="{% url 'formacao_apagar' formacao.id %}"><button style="color: red;">Apagar</button></a>
+                </div>
+            {% endif %}
         </section>
     </article>
     {% endfor %}

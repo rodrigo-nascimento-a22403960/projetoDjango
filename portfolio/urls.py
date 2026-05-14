@@ -11,6 +11,9 @@ urlpatterns = [
     path('projetos/', views.projetos_view, name='projetos'),
     path('tfcs/', views.tfcs_view, name='tfcs'),
     path('makingof/', views.makingof_view, name='makingof'),
+    
+    # ROTA ADICIONADA AQUI:
+    path('sobre/', views.sobre_view, name='sobre'), 
 
     # Autenticação
     path('registo/', views.registo_view, name='registo'),

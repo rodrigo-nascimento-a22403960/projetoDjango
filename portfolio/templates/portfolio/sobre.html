@@ -1,0 +1,232 @@
+{% extends "portfolio/base.html" %}
+{% load markdownify %}
+
+{% block content %}
+<style>
+    /* Estilos Modernos para a Página Sobre */
+    .sobre-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 50px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+    .sobre-container h1 {
+        color: #1a252f;
+        font-size: 2.5em;
+        margin-top: 0;
+        margin-bottom: 10px;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 15px;
+        display: inline-block;
+    }
+    .sobre-container .intro-text {
+        font-size: 1.15em;
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 40px;
+    }
+    .sobre-section {
+        margin-top: 50px;
+        padding-top: 20px;
+    }
+    .sobre-section h2 {
+        color: #2c3e50;
+        font-size: 1.8em;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+    }
+    .sobre-section h2::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 24px;
+        background-color: #3498db;
+        margin-right: 12px;
+        border-radius: 4px;
+    }
+    .sobre-section h3 {
+        color: #34495e;
+        font-size: 1.4em;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+    .image-placeholder {
+        background-color: #f8f9fa;
+        border: 2px dashed #cbd5e1;
+        border-radius: 10px;
+        padding: 40px 20px;
+        text-align: center;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+    }
+    .image-placeholder:hover {
+        border-color: #3498db;
+        background-color: #f1f5f9;
+    }
+    .image-placeholder p {
+        color: #64748b;
+        font-style: italic;
+        margin: 0 0 15px 0;
+    }
+    .image-placeholder img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        margin-top: 20px;
+    }
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .sobre-list {
+        list-style: none;
+        padding: 0;
+    }
+    .sobre-list li {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+    .sobre-list li::before {
+        content: "•";
+        color: #3498db;
+        font-weight: bold;
+        font-size: 1.5em;
+        position: absolute;
+        left: 0;
+        top: -4px;
+    }
+    .tech-list li {
+        background: #f8f9fa;
+        margin-bottom: 10px;
+        padding: 12px 15px;
+        border-radius: 6px;
+        border-left: 4px solid #3498db;
+        list-style: none;
+    }
+    .btn-modern {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #2c3e50;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.3s, transform 0.2s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .btn-modern:hover {
+        background-color: #1a252f;
+        transform: translateY(-2px);
+        color: white;
+    }
+</style>
+
+<div class="sobre-container">
+    <h1>Sobre esta Aplicação</h1>
+    <p class="intro-text">Bem-vindo à secção técnica do meu Portfólio. Aqui explico a arquitetura, modelação e tecnologias utilizadas neste projeto Django.</p>
+
+    <!-- PONTO 1 -->
+    <section id="arquitetura" class="sobre-section">
+        <h2>1. Arquitetura MVT do Django</h2>
+        
+        <div class="image-placeholder">
+            <p>📸 [A tua fotografia do desenho em papel MVT vai aparecer aqui]</p>
+            <!-- O onerror esconde o ícone de imagem partida enquanto não meteres lá a foto verdadeira! -->
+            <img src="/media/arquitetura_papel.jpg" alt="Desenho em papel da Arquitetura MVT" onerror="this.style.display='none'">
+        </div>
+        
+        <p style="font-size: 1.1em; margin-bottom: 15px;">O Django utiliza o padrão MVT (Model-View-Template):</p>
+        <ul class="sobre-list">
+            <li><strong>Model (Modelo):</strong> É a camada de acesso aos dados. Define a estrutura da base de dados em código Python.</li>
+            <li><strong>View (Vista):</strong> É o "cérebro" ou controlador. Recebe o pedido HTTP, vai aos Models buscar a informação, e envia para o Template.</li>
+            <li><strong>Template:</strong> É a camada de apresentação (HTML/CSS). Pega nos dados e renderiza-os no browser.</li>
+        </ul>
+
+        <h3>Vídeo Tutorial: Criação de um Projeto</h3>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/O_TEU_VIDEO_AQUI" title="YouTube video player" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <!-- PONTO 2 -->
+    <section id="modelacao" class="sobre-section">
+        <h2>2. Modelação da Base de Dados</h2>
+        
+        <div class="image-placeholder">
+            <p>📸 [A tua fotografia do Diagrama Entidade-Relacionamento vai aparecer aqui]</p>
+            <img src="/media/der_papel.jpg" alt="Diagrama Entidade-Relacionamento" onerror="this.style.display='none'">
+        </div>
+        
+        <h3>Implementação no models.py</h3>
+        <p style="line-height: 1.7;">A base de dados foi estruturada utilizando relações One-to-Many (ForeignKey) e Many-to-Many para garantir a integridade dos dados sem repetições. A <code style="background:#eee; padding:2px 6px; border-radius:4px;">Licenciatura</code> serve como pilar central, agregando as <code style="background:#eee; padding:2px 6px; border-radius:4px;">UnidadesCurriculares</code> e o <code style="background:#eee; padding:2px 6px; border-radius:4px;">TFC</code>.</p>
+    </section>
+
+    <!-- PONTO 3 -->
+    <section id="tecnologias" class="sobre-section">
+        <h2>3. Tecnologias Utilizadas</h2>
+        
+        {% regroup tecnologias by tipo as tecnologias_por_tipo %}
+        
+        {% for grupo in tecnologias_por_tipo %}
+            <h3>{% if grupo.grouper %}{{ grupo.grouper.nome }}{% else %}Outros{% endif %}</h3>
+            <ul class="tech-list" style="padding-left: 0;">
+            {% for tec in grupo.list %}
+                <li>
+                    <strong style="color: #2c3e50;">{{ tec.nome }}</strong>: <span style="color: #555;">{{ tec.descricao }}</span>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endfor %}
+    </section>
+
+    <!-- PONTO 4 -->
+    <section id="estrutura" class="sobre-section">
+        <h2>4. Estrutura das Páginas</h2>
+        <div class="image-placeholder">
+            <p>🗺️ [A tua fotografia do Mapa de Navegação vai aparecer aqui]</p>
+            <img src="/media/mapa_navegacao.jpg" alt="Mapa de Navegação do Site" onerror="this.style.display='none'">
+        </div>
+    </section>
+
+    <!-- PONTO 5 -->
+    <section id="github" class="sobre-section">
+        <h2>5. Repositório GitHub</h2>
+        <p style="line-height: 1.7; margin-bottom: 20px;">O código fonte deste projeto está alojado e versionado de forma segura no GitHub. Esta ferramenta é fundamental no desenvolvimento de software porque atua como um sistema de controlo de versões (Git) na cloud. Permite-me manter um histórico seguro de todas as alterações ao código, reverter erros caso o projeto "parta", e aceder ao meu trabalho em qualquer computador.</p>
+        <a href="https://github.com/rodrigo-nascimento-a22403960/projetoDjango" target="_blank" class="btn-modern">
+            <span style="margin-right: 8px;">💻</span> Aceder ao Repositório
+        </a>
+    </section>
+
+    <!-- PONTO 6 -->
+    <section id="making-of" class="sobre-section" style="background-color: #f8f9fa; padding: 30px; border-radius: 12px; margin-top: 60px;">
+        <h2 style="margin-top: 0;">6. Diário de Bordo (Making-Of)</h2>
+        <p style="line-height: 1.7;">O desenvolvimento desta aplicação web tem sido um desafio contínuo, composto por várias etapas iterativas: modelação de base de dados, construção de interfaces CRUD protegidas e implementação de lógicas de backend com Django.</p>
+        <p style="line-height: 1.7; margin-bottom: 25px;">Para garantir que todo o processo de aprendizagem e tomada de decisão ficasse documentado, criei um Diário de Bordo detalhado numa página dedicada.</p>
+        
+        <a href="{% url 'makingof' %}" class="btn-modern" style="background-color: #3498db;">
+            <span style="margin-right: 8px;">📖</span> Ler o Making-Of Completo
+        </a>
+    </section>
+
+</div>
+{% endblock %}

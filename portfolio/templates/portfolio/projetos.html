@@ -1,12 +1,20 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
 <h2>Projetos</h2>
+
+<!-- Botão de Criar (Apenas visível se autenticado) -->
+{% if request.user.is_authenticated %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'projeto_criar' %}"><button>+ Novo Projeto</button></a>
+    </div>
+{% endif %}
+
 <section>
     {% for projeto in projetos %}
-    <article>
+    <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
         <header>
             <h3>{{ projeto.titulo }}</h3>
-            <p>{{ projeto.unidade_curricular.nome }}</p>
+            <p><strong>Unidade Curricular:</strong> {{ projeto.unidade_curricular.nome }}</p>
         </header>
         <section>
             <p>{{ projeto.descricao }}</p>
@@ -16,8 +24,17 @@
                     <li>{{ tec.nome }}</li>
                 {% endfor %}
             </ul>
+            
             {% if projeto.github_url %}
-                <a href="{{ projeto.github_url }}" target="_blank">GitHub</a>
+                <p><a href="{{ projeto.github_url }}" target="_blank">Ver no GitHub</a></p>
+            {% endif %}
+
+            <!-- Botões de Editar e Apagar (Apenas visíveis se autenticado) -->
+            {% if request.user.is_authenticated %}
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'projeto_editar' projeto.id %}"><button>Editar</button></a>
+                    <a href="{% url 'projeto_apagar' projeto.id %}"><button style="color: red;">Apagar</button></a>
+                </div>
             {% endif %}
         </section>
     </article>

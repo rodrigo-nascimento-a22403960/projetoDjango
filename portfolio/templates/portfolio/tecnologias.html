@@ -1,17 +1,37 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
 <h2>Tecnologias</h2>
+
+<!-- Botão de Criar -->
+{% if request.user.is_authenticated %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'tecnologia_criar' %}"><button>+ Nova Tecnologia</button></a>
+    </div>
+{% endif %}
+
 <section>
-    {% for tec in tecnologias %}
-    <article>
+    {% for tecnologia in tecnologias %}
+    <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
         <header>
-            <h3>{{ tec.nome }}</h3>
-            <p>Nível de preferência: {{ tec.nivel_preferencia }}</p>
+            <h3>{{ tecnologia.nome }}</h3>
+            {% if tecnologia.tipo %}
+                <p><strong>Tipo:</strong> {{ tecnologia.tipo.nome }}</p>
+            {% endif %}
         </header>
         <section>
-            <p>{{ tec.descricao }}</p>
-            {% if tec.website_oficial %}
-                <a href="{{ tec.website_oficial }}" target="_blank">Website oficial</a>
+            <p>{{ tecnologia.descricao }}</p>
+            <p><strong>Nível de Preferência:</strong> {{ tecnologia.nivel_preferencia }}</p>
+            
+            {% if tecnologia.website_oficial %}
+                <p><a href="{{ tecnologia.website_oficial }}" target="_blank">Website Oficial</a></p>
+            {% endif %}
+
+            <!-- Botões de Editar e Apagar -->
+            {% if request.user.is_authenticated %}
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'tecnologia_editar' tecnologia.id %}"><button>Editar</button></a>
+                    <a href="{% url 'tecnologia_apagar' tecnologia.id %}"><button style="color: red;">Apagar</button></a>
+                </div>
             {% endif %}
         </section>
     </article>

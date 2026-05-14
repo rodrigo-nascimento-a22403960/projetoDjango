@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'portfolio',
     'escola',
+    'markdownify.apps.MarkdownifyConfig',
 ]
 
 MIDDLEWARE = [
@@ -117,10 +118,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
-import os
-
 # Pasta no servidor onde os ficheiros vão ser guardados
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -133,3 +130,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# --- CONFIGURAÇÃO DO MARKDOWNIFY ---
+MARKDOWNIFY = {
+   "default": {
+      "WHITELIST_TAGS": [
+        'a', 'abbr', 'acronym', 'strong', 'b',
+        'blockquote', 'em', 'i', 'ul', 'li', 'ol',
+        'p', 'h1', 'h2', 'h3', 'h4',
+      ]
+   },
+   "alternative": {
+      "WHITELIST_TAGS": ["a", "p"],
+      "MARKDOWN_EXTENSIONS": ["markdown.extensions.fenced_code", ]
+   }
+}
