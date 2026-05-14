@@ -4,6 +4,8 @@ from django.contrib.auth import models as auth_models
 from django.contrib.auth.decorators import login_required
 from .models import Licenciatura, UnidadeCurricular, Tecnologia, Competencia, Formacao, Projeto, TFC, MakingOf
 from .forms import ProjetoForm, TecnologiaForm, CompetenciaForm, FormacaoForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect
 
 
 # ---- VIEWS DE LISTAGEM ----
@@ -67,22 +69,24 @@ def registo_view(request):
     return render(request, 'portfolio/registo.html')
 
 def login_view(request):
-    if request.method == "POST":
-        user = authenticate(
-            request,
-            username=request.POST['username'],
-            password=request.POST['password']
-        )
-        if user:
+    # Se o utilizador já tiver sessão iniciada, mandamos logo para a página inicial
+    if request.user.is_authenticated:
+        return redirect('portfolio_index')
+
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
-            return redirect('projetos')
-        else:
-            return render(request, 'portfolio/login.html', {'mensagem': 'Credenciais inválidas'})
-    return render(request, 'portfolio/login.html')
+            return redirect('portfolio_index') # Redireciona para a home após sucesso
+    else:
+        form = AuthenticationForm()
+        
+    return render(request, 'portfolio/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
-    return redirect('projetos')
+    return redirect('portfolio_index')
 
 # ---- CRUD PROJETOS ----
 

@@ -1,0 +1,87 @@
+{% extends "portfolio/base.html" %}
+
+{% block content %}
+<style>
+    /* Reaproveitamos o estilo moderno dos formulários */
+    .form-modern-card {
+        max-width: 450px; /* Mais estreito para o login ficar mais elegante */
+        margin: 80px auto;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .form-modern-card h2 {
+        color: #2c3e50;
+        margin-top: 0;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+    .form-modern-card p {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    .form-modern-card label {
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 8px;
+        font-size: 0.95em;
+    }
+    .form-modern-card input[type="text"],
+    .form-modern-card input[type="password"] {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1em;
+        background-color: #fcfcfc;
+        transition: all 0.3s ease;
+    }
+    .form-modern-card input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        background-color: #ffffff;
+    }
+    .btn-login {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1em;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 15px;
+    }
+    .btn-login:hover { background-color: #2980b9; }
+    .errorlist { color: #e74c3c; list-style: none; padding: 0; font-size: 0.9em; margin-bottom: 15px; text-align: center; font-weight: bold; }
+</style>
+
+<div class="form-modern-card">
+    <h2>Iniciar Sessão</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Renderiza erros gerais de login (ex: password errada) -->
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>⚠️ {{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn-login">Entrar</button>
+    </form>
+</div>
+{% endblock %}

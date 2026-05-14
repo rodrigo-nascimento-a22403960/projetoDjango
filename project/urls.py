@@ -8,6 +8,7 @@ urlpatterns = [
     path("escola/", include("escola.urls")),
     path("portfolio/", include("portfolio.urls")),
     path("", include("portfolio.urls")),  # ← raiz aponta para portfolio
+    path("contas/", include("accounts.urls")),
     
     
 ]
