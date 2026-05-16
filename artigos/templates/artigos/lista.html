@@ -1,0 +1,33 @@
+{% extends "portfolio/base.html" %}
+
+{% block content %}
+<h2>Artigos e Publicações</h2>
+
+{% if request.user.is_authenticated %}
+    {% for grupo in request.user.groups.all %}
+        {% if grupo.name == 'autores' %}
+            <div style="margin-bottom: 20px;">
+                <a href="{% url 'artigo_criar' %}" class="btn-modern" style="background-color: #2ecc71; padding: 10px 15px; text-decoration: none; color: white; border-radius: 5px;">+ Escrever Novo Artigo</a>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<section>
+    {% for artigo in artigos %}
+        <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+            <h3><a href="{% url 'artigo_detalhe' artigo.id %}" style="text-decoration: none; color: #2c3e50;">{{ artigo.titulo }}</a></h3>
+            <p style="font-size: 0.9em; color: #7f8c8d;">Publicado por <strong>{{ artigo.autor.username }}</strong> em {{ artigo.data_criacao|date:"d/m/Y H:i" }}</p>
+            
+            <p>{{ artigo.texto|truncatewords:30 }}</p>
+            
+            <div style="margin-top: 10px;">
+                <a href="{% url 'artigo_detalhe' artigo.id %}" style="color: #3498db; text-decoration: none; font-weight: bold;">Ler mais...</a>
+                <span style="float: right; color: #e74c3c;">❤️ {{ artigo.likes }} Likes</span>
+            </div>
+        </article>
+    {% empty %}
+        <p>Ainda não existem artigos publicados. Sê o primeiro!</p>
+    {% endfor %}
+</section>
+{% endblock %}

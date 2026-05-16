@@ -1,0 +1,18 @@
+{% extends "portfolio/base.html" %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto; padding: 20px;">
+    <h2>Tornar-me um Autor</h2>
+    <p>Regista-te para poderes publicar os teus próprios artigos tecnológicos!</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit" style="background-color: #3498db; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">
+            Registar e Entrar
+        </button>
+    </form>
+</div>
+{% endblock %}

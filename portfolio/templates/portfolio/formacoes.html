@@ -1,4 +1,5 @@
 {% extends "portfolio/base.html" %}
+
 {% block content %}
 <h2>Formações</h2>
 
@@ -11,43 +12,34 @@
         {% endif %}
     {% endfor %}
 {% endif %}
-{% if request.user.is_authenticated %}
-    {% for grupo in request.user.groups.all %}
-        {% if grupo.name == 'gestor-portfolio' %}
-            <div style="margin-top: 15px;">
-                <a href="{% url 'formacao_editar' formacao.id %}" class="btn-modern" style="padding: 8px 15px; font-size: 0.9em;">Editar</a>
-                <a href="{% url 'formacao_apagar' formacao.id %}" class="btn-modern" style="background-color: #e74c3c; padding: 8px 15px; font-size: 0.9em;">Apagar</a>
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endif %}
 
 <section>
     {% for formacao in formacoes %}
-    <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
-        <header>
-            <h3>{{ formacao.nome }}</h3>
-            <p><strong>Instituição:</strong> {{ formacao.instituicao }}</p>
-            <p><strong>Data:</strong> {{ formacao.data_inicio|date:"M Y" }} 
-               {% if formacao.data_fim %} até {{ formacao.data_fim|date:"M Y" }}{% else %} (Presente){% endif %}
-            </p>
-        </header>
-        <section>
-            <p>{{ formacao.descricao }}</p>
+        <article style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+            <header>
+                <h3>{{ formacao.curso }}</h3> 
+                <p><strong>Instituição:</strong> {{ formacao.instituicao }}</p>
+            </header>
             
-            {% if formacao.certificado_url %}
-                <p><a href="{{ formacao.certificado_url }}" target="_blank">Ver Certificado</a></p>
-            {% endif %}
+            <section>
+                <p>{{ formacao.descricao }}</p>
 
-            <!-- Botões de Editar e Apagar -->
-            {% if request.user.is_authenticated %}
-                <div style="margin-top: 15px;">
-                    <a href="{% url 'formacao_editar' formacao.id %}"><button>Editar</button></a>
-                    <a href="{% url 'formacao_apagar' formacao.id %}"><button style="color: red;">Apagar</button></a>
-                </div>
-            {% endif %}
-        </section>
-    </article>
+                {% if request.user.is_authenticated %}
+                    {% for grupo in request.user.groups.all %}
+                        {% if grupo.name == 'gestor-portfolio' %}
+                            <div style="margin-top: 15px;">
+                                <a href="{% url 'formacao_editar' formacao.id %}" class="btn-modern" style="padding: 8px 15px; font-size: 0.9em;">Editar</a>
+                                <a href="{% url 'formacao_apagar' formacao.id %}" class="btn-modern" style="background-color: #e74c3c; padding: 8px 15px; font-size: 0.9em;">Apagar</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </section>
+        </article>
+    
+    {% empty %}
+        <p>Ainda não existem formações registadas.</p>
     {% endfor %}
 </section>
+
 {% endblock %}

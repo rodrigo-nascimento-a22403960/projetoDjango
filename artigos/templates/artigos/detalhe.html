@@ -1,0 +1,60 @@
+{% extends "portfolio/base.html" %}
+
+{% block content %}
+<article style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <h2>{{ artigo.titulo }}</h2>
+    <p style="color: #7f8c8d; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        Por <strong>{{ artigo.autor.username }}</strong> | {{ artigo.data_criacao|date:"d M Y, H:i" }}
+    </p>
+
+    {% if request.user == artigo.autor %}
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'artigo_editar' artigo.id %}" style="background-color: #f39c12; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px;">✏️ Editar o meu artigo</a>
+        </div>
+    {% endif %}
+
+    {% if artigo.fotografia %}
+        <img src="{{ artigo.fotografia.url }}" alt="Imagem de {{ artigo.titulo }}" style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 15px;">
+    {% endif %}
+
+    <div style="font-size: 1.1em; line-height: 1.6; margin-bottom: 20px;">
+        {{ artigo.texto|linebreaks }}
+    </div>
+
+    {% if artigo.link_externo %}
+        <p><a href="{{ artigo.link_externo }}" target="_blank" style="color: #3498db;">🔗 Link Externo</a></p>
+    {% endif %}
+
+    <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+        <a href="{% url 'artigo_like' artigo.id %}" style="background-color: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            ❤️ Gostar ({{ artigo.likes }})
+        </a>
+    </div>
+</article>
+
+<section style="margin-top: 40px;">
+    <h3>Comentários ({{ comentarios|length }})</h3>
+    
+    {% for comentario in comentarios %}
+        <div style="background: #f9f9f9; padding: 15px; margin-bottom: 10px; border-radius: 5px; border-left: 4px solid #3498db;">
+            <p style="margin: 0;"><strong>{{ comentario.autor.username }}</strong> <span style="color: #999; font-size: 0.8em;">({{ comentario.data_criacao|date:"d/m/Y H:i" }})</span></p>
+            <p style="margin: 5px 0 0 0;">{{ comentario.texto }}</p>
+        </div>
+    {% empty %}
+        <p style="color: #7f8c8d;">Seja o primeiro a comentar!</p>
+    {% endfor %}
+
+    <div style="margin-top: 30px;">
+        {% if request.user.is_authenticated %}
+            <h4>Deixe o seu comentário:</h4>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" style="background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Comentar</button>
+            </form>
+        {% else %}
+            <p>Precisa de <a href="{% url 'login' %}">iniciar sessão</a> ou fazer o <a href="{% url 'registo' %}">registo</a> para comentar.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
