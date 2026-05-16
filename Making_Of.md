@@ -180,3 +180,35 @@ O objetivo desta fase foi implementar as operações CRUD (Create, Read, Update,
 
 * **Estilização Padrão dos Formulários:** Embora o `{{ form.as_p }}` seja incrivelmente útil para poupar tempo, o HTML gerado "cru" é esteticamente muito básico e pouco apelativo. 
 * **Usabilidade dos campos ManyToMany:** Os campos de relação Muitos-para-Muitos (como associar várias Tecnologias a um Projeto) exigem que o utilizador mantenha a tecla `Ctrl` pressionada para selecionar várias opções no browser, o que não é muito intuitivo em termos de Experiência de Utilizador (UX). Requererá a aplicação de CSS, JavaScript ou ferramentas como o *Crispy Forms* numa fase posterior.
+
+## 7. Autenticação Avançada, Link Mágico e Segurança de Grupos
+
+### O Desafio
+O objetivo foi implementar um sistema de "Passwordless Login" (Magic Link) via envio de emails reais e, simultaneamente, aplicar uma camada de segurança robusta no portfólio. A ideia era garantir que não basta ter uma conta no site para gerir os projetos; é necessário ter o nível de "Gestor".
+
+### Dificuldades e Erros Corrigidos
+* **Erro de Ambiente (GitHub Codespaces vs Localhost):** * **Problema:** Ao enviar o email com o Link Mágico, o Django gerava o URL como `http://localhost:8000/...`. Ao clicar no email fora do ambiente, a página dava erro "Não é possível aceder a esta página". Além disso, recebi erros `Forbidden (403) CSRF verification failed` e `DisallowedHost`. Isto aconteceu porque o GitHub Codespaces cria um túnel e baralha as origens confiáveis do Django.
+  * **Correção:** Atualizei as variáveis `ALLOWED_HOSTS` e `CSRF_TRUSTED_ORIGINS` no `settings.py` para aceitar os domínios `.app.github.dev`. Para o Link Mágico, em vez de forçar o Django a adivinhar o link dinamicamente, hardcodei o domínio base do Codespaces no `views.py` exatamente como recomendado na documentação da disciplina.
+* **Segurança Baseada em Grupos (Botões Invisíveis):**
+  * **Problema:** Após ter o login a funcionar na perfeição, reparei que os botões "Criar Projeto" e "Editar" continuavam a não aparecer. 
+  * **Correção:** Percebi que as views (`@user_passes_test(is_gestor)`) e os templates (`{% if grupo.name == 'gestor-portfolio' %}`) estavam a exigir uma permissão superior. Acedi ao painel de administração (`/admin`), criei o grupo `gestor-portfolio` e adicionei a minha conta `RodrigoNascimento` a esse grupo.
+
+---
+
+## 8. Criação da App "Artigos" (Blog e Interatividade)
+
+### O Desafio
+Criar uma app independente chamada `artigos` para publicar conteúdos sobre tecnologias e soft-skills. Esta app exigiu um sistema próprio de Registo de Utilizadores, permissões segmentadas por autoria (só o autor pode editar o seu artigo), Likes e Comentários.
+
+### Decisões de Modelação e Lógica
+* **Associação Automática de Autores:** Na View de registo (`registo_view`), adicionei lógica para que, assim que um utilizador se regista, o Django o coloque imediatamente no grupo `autores` usando `Group.objects.get_or_create(name='autores')`. A conta entra logo com login automático (`login(request, user)`).
+* **Proteção de Edição Mútua:** Para evitar que o "Autor A" apague ou edite artigos do "Autor B", implementei uma verificação crítica na `artigo_editar`: `if artigo.autor != request.user: return HttpResponseForbidden(...)`.
+* **Likes:** Em vez de criar uma tabela complexa para guardar quem deu like, adicionei um simples campo `likes = models.IntegerField(default=0)` no modelo `Artigo`, permitindo que mesmo utilizadores anónimos (sem login) possam gostar das publicações.
+* **Comentários Relacionais:** Criei o modelo `Comentario` associado ao `Artigo` por `ForeignKey`. No template `detalhe.html`, a caixa de texto para comentar está protegida por um `{% if request.user.is_authenticated %}`. Visitantes anónimos vêem os comentários, mas não podem escrever.
+
+### Erros Identificados na App Artigos
+* **Erro Estrutural de Ciclos no HTML:** * **Problema:** Erro `NoReverseMatch with arguments '('',)' not found`. Ocorreu quando tentei reciclar o código dos botões de Editar/Apagar para as Competências e Formações.
+  * **Correção:** O erro indicava que o ID estava vazio. Percebi que estava a colocar os botões fora do ciclo `{% for %}`, onde a variável ainda não existia. Movi-os para dentro do ciclo e funcionou perfeitamente.
+* **Erro de Navegação Ausente:**
+  * **Problema:** Ao testar a app, recebi `NoReverseMatch for 'artigos_lista'`.
+  * **Correção:** A rota principal da lista de artigos estava comentada (inativa) no `artigos/urls.py`. Ao ativar a linha, o link no menu de navegação do Portfólio conseguiu finalmente mapear a página corretamente.
